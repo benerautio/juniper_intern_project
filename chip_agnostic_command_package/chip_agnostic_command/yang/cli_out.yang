@@ -1,0 +1,136 @@
+module  cli_out{
+namespace "http://yang.juniper.net/yang/1.1/cli_out";
+prefix cli_out;
+
+//This extension is needed to format the output from the action script when it gets rendered back from the CLI
+import junos-extension-odl {
+  prefix junos-odl;
+}
+
+//This extenion is needed to specify a custom CLI command and action script
+import junos-extension {
+  prefix junos;
+}
+
+organization
+  "Juniper Networks";
+
+description
+  "Used for multiple column output from CChipActionScript, general form";
+
+rpc show-chip-agnostic_cli_out {
+  description "command for CA output";
+  //Specify CLI command
+  junos:command "show chip-agnostic stats"{
+  //Specify action script
+    junos:action-execute{
+      junos:script "cli_out.py";
+
+    }
+  }
+
+  output {
+  //This container holds all of the output
+    container all-data {
+
+    leaf date {
+      type string;
+    }
+
+    junos-odl:format all-data-format {
+      junos-odl:line {
+        junos-odl:field "date";
+      }
+    }
+
+    list fpc {
+      // list structure allows correct formatting for an unspecified amount of data
+      // the key for the list indicates which data is unique for each member of the list
+
+      key "fpc-num";
+
+      leaf fpc-num {
+        type string;
+      }
+
+      leaf fpc-type {
+        type string;
+      }
+
+      junos-odl:format fpc-format{
+        junos-odl:picture "@<<<<<<<<<<<<
+                           @<<<<<<<<<<<<";
+        junos-odl:indent 5;
+        junos-odl:line{
+          junos-odl:field "fpc-num";
+          junos-odl:field "fpc-type";
+
+        }
+      }
+
+      container chip-instance {
+
+        container cchip{
+
+          container outputs{
+
+            list cchip-table{
+
+              key "table-name";
+
+              leaf table-name{
+                type string;
+              }
+
+              junos-odl:format table-name-format{
+                junos-odl:picture "@<<<<<<<<<<<<";
+                junos-odl:indent 10;
+                junos-odl:line{
+                  junos-odl:field "table-name";
+
+                }
+              }
+
+              container cchip-table-data {
+
+                list counter-list{
+                  key "counter";
+
+                  leaf counter{
+                    type string;
+                  }
+
+                  leaf nested-counter{
+                    type string;
+                  }
+
+                  junos-odl:format counter-list-format{
+                    junos-odl:picture "@<<<<<<<<<<<<
+                                       @<<<<<<<<<<<<";
+                    junos-odl:indent 15;
+                    junos-odl:line{
+                      junos-odl:field "counter";
+                      junos-odl:field "nested-counter";
+                    }
+                    //junos-odl:line{
+                      //junos-odl:field "nested-counter";
+                    //}
+                  }
+                }
+
+
+            }
+            }
+          }
+
+        }
+
+      }
+
+
+
+      }
+    }
+  }
+}
+}

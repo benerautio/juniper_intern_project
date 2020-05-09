@@ -1,0 +1,351 @@
+module  chip_agnostic_command{
+namespace "http://yang.juniper.net/yang/1.1/chip_agnostic_command_testing";
+prefix chassis_class_testing;
+
+//This extension is needed to format the output from the action script when it gets rendered back from the CLI
+//import junos-extension-odl {
+//  prefix junos-odl;
+//}
+
+//This extenion is needed to specify a custom CLI command and action script
+import junos-extension {
+  prefix junos;
+}
+
+organization
+  "Juniper Networks";
+
+description
+  "Creates custom CLI command and RPC, then renders chip agnostic stats to CLI";
+
+//creates RPC
+rpc get_chip_agnostic_stats {
+  description "command for CA output";
+  //Specify CLI command
+  junos:command "show center_chip stats" {
+  //Specify action script
+    junos:action-execute {
+      junos:script "chip_agnostic_command.py";
+
+    }
+  }
+
+  output {
+
+  container all-data {
+    leaf date {
+      type string;
+    }
+
+    //junos-odl:format date-out {
+    //  junos-odl:line {
+    //    junos-odl:field "date";
+    //  }
+    //}
+
+    list fpc {
+
+      key "fpc-num";
+
+      leaf fpc-num {
+        type string;
+      }
+
+      leaf fpc-type {
+        type string;
+      }
+
+      container center-chip {
+        list chip-instance {
+          key "chip-instance-num";
+
+          leaf chip-instance-num {
+            type string;
+          }
+          container tables {
+            container CChipDRDErrTable {
+              leaf cchip-drd-fab-errors {
+                type string;
+              }
+              leaf cchip-drd-fab-timeouts {
+                type string;
+              }
+              leaf cchip-drd-wan-errors {
+                type string;
+              }
+              leaf cchip-drd-wan-timeouts {
+                type string;
+              }
+            }
+            container CChipFOStatsTable {
+              choice FO-stats-xm {
+                case FO-stats-xm {
+                  leaf cchip-fo-packets-sent {
+                    type string;
+                  }
+
+                  //junos-odl:format FO-xm {
+                  //  junos-odl:line {
+                  //    junos-odl:field "cchip-fo-packets-sent";
+                  //  }
+                  //}
+                }
+                case FO-stats-mq {
+                  container plane-0 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  //junos-odl:format FO-mq1 {
+                  //  junos-odl:line {
+                  //    junos-odl: field "cchip-fo-total-packets-sent";
+                  //  }
+                  //}
+                  }
+                  container plane-1 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-2 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-3 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-4 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-5 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-6 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-7 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-8 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-9 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-10 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-11 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-12 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                    }
+                  }
+                  container plane-13 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-14 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-15 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-16 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-17 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-18 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                    }
+                  }
+                  container plane-19 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-20 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-21 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-22 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                  container plane-23 {
+                    leaf cchip-fo-total-packets-sent {
+                      type string;
+                  }
+                  }
+                }
+              }
+            }
+
+            container CChipFiErrTable {
+              choice fi-err {
+                case f-err-xm {
+                  leaf cchip-fi-cell-timeout {
+                    type string;
+                  }
+                  leaf cchip-fi-crc-error-packets {
+                    type string;
+                  }
+                  leaf cchip-fi-error-cells {
+                    type string;
+                  }
+                  leaf cchip-fi-late-cells {
+                    type string;
+                  }
+                  leaf cchip-fi-malloc-drops {
+                    type string;
+                  }
+                  }
+                //may need to change once YAML works
+                case fi-err-mq {
+                  leaf unknown-fo-err {
+                    type empty;
+                  }
+                }
+              }
+            }
+            container CChipFiStatsTable {
+              leaf cchip-fi-packets-dropped {
+                type string;
+              }
+              leaf cchip-fi-packets-received {
+                type string;
+              }
+              leaf cchip-fi-packets-sent-ok {
+                type string;
+              }
+              leaf cchip-fi-packets-with-error {
+                type string;
+              }
+            }
+            container CChipHostDropTable{
+              leaf cchip-host-path-drops {
+                type string;
+              }
+            }
+            container CChipLiInterruptStatsTable {
+              leaf cchip-errors-from-lookup-chip {
+                type string;
+              }
+            }
+            container CChipLoStatsTable {
+              leaf cchip-lookup-out-errors {
+                type string;
+              }
+            }
+            //add uo and uo_cnt together
+            //only use cnt, name it the same as xm case
+            container CChipPTStatTable {
+              choice pt-stats {
+                case pt-stats-xm {
+                  leaf cchip-free-internal-packet-table-fabric {
+                    type string;
+                  }
+                  leaf cchip-free-internal-packet-table-wan {
+                    type string;
+                  }
+                }
+                case pt-stats-mq{
+                  leaf cchip-free-internal-packet-table-fabric_cnt {
+                    type string;
+                  }
+                  leaf cchip-free-internal-packet-table-fabric_uo_cnt {
+                    type string;
+                  }
+                  leaf cchip-free-internal-packet-table-wan_cnt {
+                    type string;
+                  }
+                  leaf cchip-free-internal-packet-table-wan_uo_cnt {
+                    type string;
+                  }
+                }
+              }
+            }
+            container CChipWiStatsTable {
+              choice wi-stats {
+                case wi-stats-xm {
+                  leaf cchip-total-oversubscription-drop {
+                    type string;
+                  }
+                  leaf cchip_wi_stall_0 {
+                    type string;
+                  }
+                  leaf cchip_wi_stall_1 {
+                    type string;
+                  }
+                }
+                case wi-stats-mq {
+                  leaf cchip-total-drop {
+                    type string;
+                  }
+                  leaf cchip-wi-stall_cchip-wi-received-packets {
+                    type string;
+                  }
+                  leaf cchip-wi-stall_cchip-wi-stall-0 {
+                    type string;
+                  }
+                  leaf cchip-wi-stall_cchip-wi-stall-1 {
+                    type string;
+                  }
+                }
+              }
+            }
+            container CChipWoStatsTable {
+              leaf cchip-wo-packets-sent {
+                type string;
+              }
+            }
+          }
+        }
+
+        }
+      }
+
+    }
+  }
+
+  }
+  }

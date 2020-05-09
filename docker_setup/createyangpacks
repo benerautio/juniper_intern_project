@@ -1,0 +1,26 @@
+#!/usr/bin/expect -f
+
+set timeout 120
+set hostname [lindex $argv 0];
+set username [lindex $argv 1];
+set password [lindex $argv 2];
+
+spawn ssh -o StrictHostKeyChecking=no $username@$hostname
+expect "*?assword:*"
+send -- "$password\r"
+expect "#*"
+send -- "cli\r"
+expect ">*"
+send -- "request system yang add package chip_agnostic_pack_xml action-script /var/db/scripts/action/chip_agnostic_command_package/chip_agnostic_command/action_scripts/chip_agnostic_command.py module /var/db/scripts/action/chip_agnostic_command_package/chip_agnostic_command/yang/chip_agnostic_command.yang\r"
+expect "yes*"
+send -- "yes\r"
+expect ">*"
+send -- "request system yang add package chip_agnostic_pack_cli action-script /var/db/scripts/action/chip_agnostic_command_package/chip_agnostic_command/action_scripts/cli_out.py module /var/db/scripts/action/chip_agnostic_command_package/chip_agnostic_command/yang/cli_out.yang\r"
+expect "yes*"
+send -- "yes\r"
+expect ">*"
+send -- "exit\r"
+expect "#*"
+send -- "exit\r"
+expect eof
+

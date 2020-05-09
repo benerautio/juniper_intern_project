@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+
+set timeout 120
+set username [lindex $argv 0];
+set password [lindex $argv 1];
+
+spawn ansible-playbook -u $username -k main.yaml
+expect "SSH password:*"
+send -- "$password\r"
+expect "user name:*"
+send -- "$username\r"
+expect "Device password:*"
+send -- "$password\r"
+expect eof

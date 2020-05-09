@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+
+set timeout 120
+set hostname [lindex $argv 0];
+set username [lindex $argv 1];
+set password [lindex $argv 2];
+
+spawn ssh -o StrictHostKeyChecking=no $username@$hostname
+expect "*?assword:*"
+send -- "$password\r"
+expect "#*"
+send -- "rm /opt/lib/python2.7/site-packages/yamlordereddictloader.p*\r"
+sleep 1
+send -- "exit\r"
+expect eof

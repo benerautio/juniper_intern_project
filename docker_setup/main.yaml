@@ -1,0 +1,114 @@
+---
+- name: Install dependencies
+  hosts: all
+  roles:
+    - Juniper.junos
+  connection: netconf
+  gather_facts: no
+
+  vars_prompt:
+  - name: USERNAME
+    prompt: user name
+    private: no
+  - name: DEVICE_PASSWORD
+    prompt: Device password
+    private: yes
+
+  tasks:
+
+    - name: Get present files on router
+      junos_command:
+        commands: file list /opt/lib/python2.7/site-packages
+        display: text
+      register: result
+
+    - name: Installing PyYAML...
+      command: expect removeyaml "{{ inventory_hostname}}" "{{ USERNAME}}" "{{ DEVICE_PASSWORD}}"
+      #when: '"yaml" in "{{ result.stdout_lines }}"'
+
+    - name: Updating file list..
+      junos_command:
+        commands: file list /opt/lib/python2.7/site-packages
+        display: text
+      register: result
+
+    - name: Installing PyYAML 5.1
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /usr/lib/python2.7/site-packages/yaml
+        dest: /opt/lib/python2.7/site-packages
+        recursive: yes
+      #when: '"yaml" not in "{{ result.stdout_lines }}"'
+
+    - name: Checking for yamlordereddictloader...
+      command: expect copyyodl "{{ inventory_hostname}}" "{{ USERNAME}}" "{{ DEVICE_PASSWORD}}"
+      when: '"yamlordereddictloader.pyc" not in "{{ result.stdout_lines }}"'
+
+    - name: Updating file list..
+      junos_command:
+        commands: file list /opt/lib/python2.7/site-packages
+        display: text
+      register: result
+
+    - name: Copying yamlordereddictloader.py
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /usr/lib/python2.7/site-packages/yamlordereddictloader.py
+        dest: /opt/lib/python2.7/site-packages
+        recursive: yes
+      when: '"yamlordereddictloader.pyc" not in "{{ result.stdout_lines }}"'
+
+    - name: Copying yamlordereddictloader.pyc
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /usr/lib/python2.7/site-packages/yamlordereddictloader.pyc
+        dest: /opt/lib/python2.7/site-packages
+        recursive: yes
+      when: '"yamlordereddictloader.pyc" not in "{{ result.stdout_lines }}"'
+
+    - name: Checking for transitions...
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /usr/lib/python2.7/site-packages/transitions
+        dest: /opt/lib/python2.7/site-packages
+        recursive: yes
+      when: '"transitions" not in "{{ result.stdout_lines }}"'
+
+
+    - name: Updating Junos PyEZ...
+      command: expect removejnpr "{{ inventory_hostname }}" "{{ USERNAME }}" "{{ DEVICE_PASSWORD }}"
+
+    - name: Updating Junos PyEZ...
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /usr/lib/python2.7/site-packages/jnpr
+        dest: /opt/lib/python2.7/site-packages
+        recursive: yes
+
+    - name: Copying chip_agnostic_command_package
+      junos_scp:
+        provider:
+          host: "{{ inventory_hostname }}"
+          username: "{{ USERNAME }}"
+          password: "{{ DEVICE_PASSWORD }}"
+        src: /chip_agnostic_command_package
+        dest: /var/db/scripts/action/
+        recursive: yes
+
+    - name: Creating YANG packages chip_agnostic_pack_xml and chip_agnostic_pack_cli
+      command: expect createyangpacks "{{ inventory_hostname}}" "{{ USERNAME}}" "{{ DEVICE_PASSWORD}}"
